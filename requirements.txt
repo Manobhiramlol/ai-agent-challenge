@@ -1,0 +1,11 @@
+pandas
+pdfplumber
+pytest
+tabula-py
+pillow
+pytesseract
+pymupdf
+langgraph
+google-generativeai
+groq
+python-dotenv

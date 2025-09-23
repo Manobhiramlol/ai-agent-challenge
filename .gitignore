@@ -1,0 +1,33 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.egg-info/
+.build/
+dist/
+.eggs/
+
+# Environments
+.env
+.venv/
+venv/
+.envrc
+
+# IDE/editor
+.vscode/
+.idea/
+*.code-workspace
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs and artifacts
+*.log
+*.out
+*.tmp
+
+# Project-specific
+custom_parsers/__pycache__/
+data/**/tmp/
