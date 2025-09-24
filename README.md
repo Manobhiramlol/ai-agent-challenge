@@ -47,8 +47,23 @@ The agent operates as a **LangGraph state machine** with autonomous self-correct
 
 
 ```
-**Agent Flow**: The system initializes with attempt tracking, prompts Groq's Llama-3.3-70B to generate `custom_parsers/<bank>_parser.py`, executes the parser on sample PDFs, compares output to reference CSV using `DataFrame.equals()`, and on mismatches, analyzes specific issues (date formats, numeric normalization, header artifacts) to provide targeted code fixes in subsequent iterations until exact equality or attempt exhaustion.
+**Agent Flow**: 
 
+1. **Initialization:** "system initializes with attempt tracking"
+
+2. **Code Generation:** "prompts Groq's `Llama-3.3-70B` to generate `custom_parsers/<bank>_parser.py`"
+
+3. **Execution:** "executes the parser on sample PDFs"
+
+4. **Validation:** "compares output to reference CSV using `DataFrame.equals()`"
+
+5. **Self-Correction:** "analyzes specific issues (date formats, numeric normalization, header artifacts)"
+
+6. **Iterative Process:** "targeted code fixes in subsequent iterations"
+
+7. **Termination Conditions:** "until exact equality or attempt exhaustion"
+
+--- 
 ## 🚀 Quick Start
 
 ### Prerequisites
@@ -60,25 +75,25 @@ The agent operates as a **LangGraph state machine** with autonomous self-correct
 
 **1. Clone and Install**
 
-`git clone https://github.com/yourusername/ai-agent-challenge.git`
+- `git clone https://github.com/Manobhiramlol/ai-agent-challenge.git`
 
-`cd ai-agent-challenge`
+- `cd ai-agent-challenge`
 
-`pip install -r requirements.txt`
+- `pip install -r requirements.txt` / `pip install --no-cache-dir -r requirements.txt`
 
 ---
 
 **2. Configure Environment**
 
-`cp .env.example .env`
+- `cp .env.example .env`
 
-- Edit `.env` and set:
+  - Edit `.env` and set:
 
-`GROQ_API_KEY=your_groq_api_key_here`
+- `GROQ_API_KEY=your_groq_api_key_here`
 
-`LLM_PROVIDER=groq`
+- `LLM_PROVIDER=groq`
 
-`GROQ_MODEL=llama-3.3-70b-versatile`
+- `GROQ_MODEL=llama-3.3-70b-versatile`
 
 ---
 **3. Verify Sample Data**
@@ -109,7 +124,7 @@ The agent operates as a **LangGraph state machine** with autonomous self-correct
 
 ## ⚙️ How It Works
 
-### Autonomous Code Generation
+### 1.  Autonomous Code Generation
 - **Input**: Sample PDF + expected CSV schema
 - **Process**: LLM generates complete parser with error handling
 - **Validation**: Strict `DataFrame.equals()` comparison
@@ -118,7 +133,7 @@ The agent operates as a **LangGraph state machine** with autonomous self-correct
   - Numeric normalization (remove commas, handle parentheses)
   - Header artifact cleanup (OCR noise, duplicate headers)
 
-### Generated Parser Contract
+### 2. Generated Parser Contract
 
 `def parse(pdf_path: str) -> pd.DataFrame:
 """`
@@ -318,9 +333,9 @@ python scripts/check_out.py      # → "Exact match: True"
 
 - **Override default settings**
 
-````export AGENT_MAX_TRIES=3````
+  - ````export AGENT_MAX_TRIES=3````
 
-`export AGENT_TIMEOUT=120`
+  - `export AGENT_TIMEOUT=120`
 ```python
 python agent.py --target icici
 ```
@@ -406,3 +421,4 @@ This project is developed for the **Agent-as-Coder Challenge**. See challenge do
 ---
 
 **Challenge Status**: ✅ Complete - Ready for evaluation
+
