@@ -319,7 +319,7 @@ pip install -r requirements.txt
 
 cp .env.example .env
 
-Edit .env to add GROQ_API_KEY (hidden in demo)
+Edit .env to add GROQ_API_KEY/gemini_API_KEY (hidden in demo)
 
 python agent.py --target icici   # → "✅ Match / Green ✅"
 
@@ -421,4 +421,5 @@ This project is developed for the **Agent-as-Coder Challenge**. See challenge do
 ---
 
 **Challenge Status**: ✅ Complete - Ready for evaluation
+
 
