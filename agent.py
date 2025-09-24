@@ -146,7 +146,7 @@ PROMPT = "You write Python modules that parse bank statement PDFs.\n\n" \
 # Nodes
 # ----------------------------
 def generate_code_node(st: State) -> dict:
-    log.info(f"Generate code for {st['bank']} (attempt {st['attempt']})")
+    log.info(f"🤖 Generate code for {st['bank']} (attempt {st['attempt']})")
     cols = pd.read_csv(st["csv"], nrows=1).columns.tolist()
     sample = pd.read_csv(st["csv"], nrows=2).to_string(index=False)
 
@@ -180,7 +180,7 @@ def generate_code_node(st: State) -> dict:
     return {"code": text, "parser_py": OUT_DIR / f"{st['bank']}_parser.py"}
 
 def execute_and_validate_node(st: State) -> dict:
-    log.info("Execute and validate")
+    log.info("🔍 Execute and validate")
     script = st["parser_py"]
     script.write_text(st["code"], encoding="utf-8")
 
@@ -231,7 +231,6 @@ def execute_and_validate_node(st: State) -> dict:
         )
         if mask_header.any():
             parsed = parsed[~mask_header].reset_index(drop=True)
-
 
     # Column order must match
     if list(parsed.columns) != list(expected.columns):
@@ -294,12 +293,31 @@ def execute_and_validate_node(st: State) -> dict:
                              .str.replace(")", "", regex=False))
             parsed[c] = pd.to_numeric(parsed[c], errors="coerce")
 
-    # Align row count if parser over-captured
+    # Check for significant row count mismatch BEFORE truncation
+    if abs(len(parsed) - len(expected)) > 2:
+        row_diff = len(parsed) - len(expected)
+        if len(parsed) > len(expected):
+            extra_rows = parsed.iloc[len(expected):].head(2)
+            sample_extra = f"\nExtra rows (likely header artifacts):\n{extra_rows.to_string()}"
+            hint = "Add header filtering: remove rows where Date is NaN or Description contains 'Description' or Date contains 'Date'"
+        else:
+            sample_extra = f"\nMissing {abs(row_diff)} rows - check extraction logic"
+            hint = "Ensure all data rows are extracted from PDF"
+        
+        diff = (
+            f"Row count mismatch: {len(parsed)} vs {len(expected)} (diff: {row_diff}){sample_extra}\n"
+            f"Fix: {hint}"
+        )
+        os.remove(tmp_out)
+        return {"feedback": diff}
+
+    # Only do minor alignment for small differences (≤2 rows)
     if len(parsed) > len(expected):
+        log.warning(f"Auto-truncating {len(parsed) - len(expected)} extra rows")
         parsed = parsed.iloc[: len(expected)].copy()
 
     if parsed.equals(expected):
-        log.info("✅ Match")
+        log.info("✅ Match / Green ✅")
         try:
             os.remove(tmp_out)
         except Exception:
@@ -321,6 +339,7 @@ def decide_node(st: State) -> str:
     if st["attempt"] >= MAX_TRIES:
         log.error("❌ Max attempts reached")
         return END
+    log.info(f"🔄 Retrying (attempt {st['attempt'] + 1}/{MAX_TRIES})")
     return "retry"
 
 def retry_node(st: State) -> dict:
@@ -351,10 +370,12 @@ app = graph.compile()
 # CLI
 # ----------------------------
 def main():
-    ap = argparse.ArgumentParser(description="Agent that generates a bank PDF parser")
+    ap = argparse.ArgumentParser(description="🤖 Agent-as-Coder: Autonomous Bank PDF Parser Generator")
     ap.add_argument("--target", type=str, required=True, help="Bank folder name in ./data (e.g., icici)")
     args = ap.parse_args()
     bank = args.target.strip().lower()
+
+    print(f"🤖 Agent-as-Coder: Starting {bank.upper()} parser generation...")
 
     try:
         pdf, csv = _find_inputs(bank)
@@ -381,10 +402,12 @@ def main():
         print("\n--------------------------\n")
 
     if fb is not None:
-        log.error("Agent finished with errors. See feedback above.")
+        log.error("❌ Agent finished with errors. See feedback above.")
         return 1
 
-    log.info("Green ✅")
+    print(f"🎯 Success! Parser generates exact DataFrame match.")
+    print(f"📄 Generated: custom_parsers/{bank}_parser.py")
+    log.info("✅ Green ✅")
     return 0
 
 if __name__ == "__main__":
