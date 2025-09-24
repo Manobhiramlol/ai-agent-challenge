@@ -91,9 +91,12 @@ The agent operates as a **LangGraph state machine** with autonomous self-correct
 
 - `GROQ_API_KEY=your_groq_api_key_here`
 
-- `LLM_PROVIDER=groq`
+`GROQ_MODEL=llama-3.3-70b-versatile`
 
-- `GROQ_MODEL=llama-3.3-70b-versatile`
+# Opt: Google Gemini fallback
+`GEMINI_API_KEY=your_gemini_api_key_here`
+
+`GEMINI_MODEL=gemini-2.5-flash`
 
 ---
 **3. Verify Sample Data**
@@ -421,6 +424,7 @@ This project is developed for the **Agent-as-Coder Challenge**. See challenge do
 ---
 
 **Challenge Status**: ✅ Complete - Ready for evaluation
+
 
 
 
